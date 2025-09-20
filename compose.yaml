@@ -1,1 +1,39 @@
 services:
+  # Serviço do RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # Porta para comunicação AMQP
+      - "15672:15672" # Porta para a interface de gerenciamento web
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Serviço da aplicação pont-service
+  point-service:
+    build:
+      context: ./point-service # Caminho para a pasta do serviço
+    container_name: pont_service_app
+    depends_on:
+        rabbitmq:
+            condition: service_healthy
+    ports:
+      - "8081:8080" # Mapeia a porta 8080 do container para a 8081 da sua máquina
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    networks:
+      - app-network
+
+volumes:
+  rabbitmq_data:
+
+networks:
+  app-network:
+    driver: bridge

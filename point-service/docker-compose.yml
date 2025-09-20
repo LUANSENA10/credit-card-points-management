@@ -1,0 +1,22 @@
+services:
+  postgres-point-db:
+    image: postgres:16
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-point-db:5432/pointdb
+      SPRING_DATASOURCE_USERNAME: pointuser
+      SPRING_DATASOURCE_PASSWORD: pointpass
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_point_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pointuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
