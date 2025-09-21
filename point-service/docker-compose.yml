@@ -1,13 +1,10 @@
 services:
-  postgres-point-db:
+  postgres:
     image: postgres:16
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-point-db:5432/pointdb
-      SPRING_DATASOURCE_USERNAME: pointuser
-      SPRING_DATASOURCE_PASSWORD: pointpass
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      POSTGRES_DB: pointdb
+      POSTGRES_USER: pointuser
+      POSTGRES_PASSWORD: pointpass
     ports:
       - "5432:5432"
     volumes:
@@ -20,3 +17,24 @@ services:
     networks:
       - app-network
 
+  point-service:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pointdb
+      SPRING_DATASOURCE_USERNAME: pointuser
+      SPRING_DATASOURCE_PASSWORD: pointpass
+      SPRING_PROFILES_ACTIVE: default
+    networks:
+      - app-network
+
+volumes:
+  postgres_point_data:
+
+networks:
+  app-network:
+    driver: bridge

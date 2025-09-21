@@ -1,6 +1,7 @@
 package com.luansena.creditcardpoints.point.adapters.in.queue;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.luansena.creditcardpoints.point.domain.model.CardType;
 import com.luansena.creditcardpoints.point.domain.ports.in.PointsServicePort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +22,13 @@ public class TransactionQueueListener {
         this.pointsService = pointsService;
     }
 
-    @RabbitListener(queues = "transaction.authorized.queue")
+    @RabbitListener(queues = "${spring.transaction.authorized.queue}")
     public void handleTransactionAuthorized(TransactionMessage message) {
 
         try {
 
             logger.info("Mensagem recebida da fila: {}", message);
-            pointsService.addPoints(message.cardId(), message.cardType(), message.amount());
+            pointsService.addPoints(message.cardId(), CardType.valueOf(message.cardType), message.amount());
             logger.info("Pontos processados com sucesso para o cartão ID: {}", message.cardId());
         } catch (Exception e) {
             logger.error("Erro ao processar mensagem para o cartão ID: {}. Erro: {}", message.cardId(), e.getMessage(), e);

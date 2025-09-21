@@ -1,4 +1,4 @@
-package com.luansena.creditcardpoints.point.service;
+package com.luansena.creditcardpoints.point;
 
 import org.springframework.boot.SpringApplication;
 

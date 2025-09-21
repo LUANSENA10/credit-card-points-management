@@ -1,4 +1,4 @@
-package com.luansena.creditcardpoints.partner.domain.strategy.impl;
+package com.luansena.creditcardpoints.point.domain.strategy.impl;
 
 import com.luansena.creditcardpoints.partner.domain.strategy.PointsCalculationStrategy;
 import org.springframework.stereotype.Component;
