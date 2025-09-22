@@ -1,103 +1,90 @@
-# Credit Card Points Management Microservices
+# Credit Card Points - Documentação
 
-Este projeto implementa a **gestão de pontos acumulados por usuários em cartões de crédito** usando arquitetura de microserviços em Java (Spring Boot), com cada serviço rodando em seu próprio contêiner Docker. Todos os microserviços estão organizados em um **monorepo**, permitindo desenvolvimento, versionamento e orquestração centralizada dos serviços.
+## Regra de Negócio
 
----
+O sistema Credit Card Points tem como objetivo gerenciar o acúmulo e o resgate de pontos de cartão de crédito dos usuários. Usuários podem acumular pontos ao realizar transações, consultar seu saldo de pontos, e trocar pontos por benefícios oferecidos por parceiros cadastrados no sistema. O fluxo principal envolve:
 
-## Objetivo
+- Cadastro e autenticação de usuários.
+- Registro de transações que geram pontos.
+- Consulta e controle do saldo de pontos de cada usuário.
+- Cadastro de parceiros que oferecem benefícios ou produtos para resgate.
+- Resgate de pontos por meio de trocas com parceiros.
 
-Gerenciar o acúmulo, consulta, e uso de pontos obtidos por usuários em compras realizadas com cartões de crédito, permitindo integração com parceiros comerciais para resgate ou consumo dos pontos.
-
----
-
-## Arquitetura Hexagonal
-
-O projeto adota a **arquitetura hexagonal (Ports & Adapters)** em cada microserviço.  
-Essa abordagem separa a lógica de negócio do restante da aplicação, promovendo baixo acoplamento e facilidade para testes e mudanças tecnológicas.
-
-- **Core (Domínio):**  
-  Contém as regras de negócio centrais, modelos e serviços.
-- **Ports (Portas):**  
-  Interfaces que representam operações importantes para o domínio (ex: consultar pontos, cadastrar usuário).
-- **Adapters (Adaptadores):**  
-  Implementações das interfaces (ex: APIs REST, integração com Kafka, acesso a banco de dados).
-
-Cada serviço está estruturado para que:
-- O domínio não dependa de frameworks, bancos de dados ou protocolos de comunicação.
-- A comunicação com o mundo externo (ex: REST, Kafka, DB) é feita via adaptadores, facilmente substituíveis.
-
----
-
-## Monorepo
-
-Todos os microserviços são mantidos em um único repositório (**monorepo**), facilitando a gestão e integração entre eles.  
-Exemplo de estrutura:
-
-```plaintext
-credit-card-points-management/
-├── user-service/
-├── card-service/
-├── point-service/
-├── consulta-service/
-├── partner-service/
-├── docker-compose.yml
-└── README.md
-```
-
----
-
-## Microserviços
-
-- **user-service**  
-  Gerencia cadastro e dados dos usuários.
-
-- **card-service**  
-  Gerencia cartões de crédito vinculados aos usuários e registra transações.
-
-- **point-service**  
-  Calcula, credita e atualiza pontos em cada transação.
-
-- **consulta-service**  
-  Permite a consulta do saldo de pontos de um usuário.
-
-- **partner-service**  
-  Permite que parceiros consultem e consumam pontos dos usuários via integração.
-
----
+A arquitetura de microsserviços garante escalabilidade, separação de responsabilidades e facilidade de manutenção, permitindo que cada domínio (usuário, pontos, parceiros) evolua de forma independente.
 
 ## Tecnologias Utilizadas
 
-- **Java 17**
-- **Spring Boot**
-- **Docker & Docker Compose**
-- **Apache Kafka** (mensageria entre serviços)
-- **REST API**
+- **Java 21**: Linguagem principal para desenvolvimento dos microsserviços.
+- **Spring Boot**: Framework para construção dos microsserviços (bff, user-service, point-service, partner-service).
+- **Spring Cloud OpenFeign**: Comunicação entre microsserviços via HTTP declarativo.
+- **Docker & Docker Compose**: Containerização dos serviços e orquestração de ambiente local.
+- **PostgreSQL**: Banco de dados relacional utilizado pelo user-service.
+- **Maven**: Gerenciador de dependências e build dos projetos Java.
 
----
+## Arquitetura
 
-## Fluxo de Negócio
+O sistema segue uma arquitetura de microsserviços, composta por:
 
-1. **Compra realizada:** Usuário faz uma compra com o cartão.
-2. **Registro de transação:** card-service registra a compra e envia evento para o point-service.
-3. **Acúmulo de pontos:** point-service calcula e credita pontos ao usuário.
-4. **Consulta de pontos:** Usuário ou parceiro consulta pontos via consulta-service ou partner-service.
-5. **Consumo de pontos:** Parceiros podem consumir pontos do usuário para produtos/serviços, mediante autorização.
+- **BFF (Backend For Frontend)**: Camada intermediária entre o frontend e os microsserviços, responsável por orquestrar chamadas e agregar dados.
+- **User Service**: Gerencia usuários e autenticação.
+- **Point Service**: Gerencia pontos de cartão de crédito.
+- **Partner Service**: Gerencia parceiros do sistema.
 
----
+A comunicação entre os microsserviços é feita via HTTP, utilizando Feign Clients para facilitar a integração. Todos os serviços são containerizados com Docker e se comunicam por meio de uma rede Docker compartilhada.
 
-## Como Executar
+## Como Executar e Testar Localmente
 
-1. Compile cada microserviço com Maven:
-   ```bash
-   mvn clean package
+### Pré-requisitos
+- Docker e Docker Compose instalados
+- Java 21 e Maven instalados (opcional, para builds manuais)
+
+### Passos para subir o ambiente completo
+
+1. **Clone o repositório:**
+   ```sh
+   git clone <url-do-repositorio>
+   cd creditcardpoints
    ```
-2. Inicie todos os serviços e dependências:
-   ```bash
-   docker-compose up --build
+
+2. **Suba todos os serviços com Docker Compose:**
+   ```sh
+   docker compose -f compose.yaml up --build
+   ```
+   Isso irá:
+   - Construir as imagens dos microsserviços
+   - Subir containers para bff, user-service, point-service, partner-service e bancos de dados necessários
+
+3. **Acesse os serviços:**
+   - BFF: http://localhost:8085
+   - User Service: http://localhost:8081
+   - Point Service: http://localhost:8080
+   - Partner Service: http://localhost:8084
+
+   (As portas podem variar conforme configuração dos docker-compose)
+
+4. **Testes automatizados:**
+   Para rodar os testes de cada serviço:
+   ```sh
+   cd <nome-do-serviço>
+   ./mvnw test
+   ```
+   Exemplo:
+   ```sh
+   cd bff
+   ./mvnw test
    ```
 
+### Observações
+- Certifique-se de que todas as portas necessárias estão livres.
+- Os serviços se comunicam via nomes de host definidos no Docker Compose (ex: `user-service`, `point-service`).
+- As configurações de URLs dos serviços estão nos arquivos `application.yml` de cada projeto.
+
+## Estrutura dos Diretórios
+
+- `bff/` - Backend For Frontend
+- `user-service/` - Serviço de usuários
+- `point-service/` - Serviço de pontos
+- `partner-service/` - Serviço de parceiros
+- `compose.yaml` - Orquestração de todos os serviços
+
 ---
-
-## Autor
-
-[LUANSENA10](https://github.com/LUANSENA10)
