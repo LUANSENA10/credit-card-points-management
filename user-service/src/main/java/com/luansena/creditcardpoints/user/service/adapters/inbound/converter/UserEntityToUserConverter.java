@@ -13,6 +13,7 @@ public class UserEntityToUserConverter {
         user.setName(entity.getUsername());
         user.setEmail(entity.getEmail());
         user.setPassword(entity.getPassword());
+        user.setLogin(entity.getLogin());
         return user;
     }
 
@@ -22,4 +23,3 @@ public class UserEntityToUserConverter {
                 .collect(Collectors.toList());
     }
 }
-

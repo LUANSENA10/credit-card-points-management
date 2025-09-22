@@ -11,7 +11,8 @@ public class UserEntityToUserDTOConverter {
             entity.getId(),
             entity.getUsername(),
             entity.getEmail(),
-            entity.getPassword()
+            entity.getPassword(),
+            entity.getLogin()
         );
     }
 
@@ -21,4 +22,3 @@ public class UserEntityToUserDTOConverter {
                 .collect(Collectors.toList());
     }
 }
-

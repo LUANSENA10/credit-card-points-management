@@ -20,10 +20,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        // Permitir requisições para POST /users sem autenticação
+        // Permitir requisições para POST /users e GET /users/login/** sem autenticação
         String path = request.getRequestURI();
         String method = request.getMethod();
-        if ("/users".equals(path) && "POST".equalsIgnoreCase(method)) {
+        if (("/users".equals(path) && "POST".equalsIgnoreCase(method)) ||
+            (path.startsWith("/users/login") && "GET".equalsIgnoreCase(method))) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -42,4 +43,3 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
-

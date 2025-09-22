@@ -21,14 +21,18 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false, unique = true)
+    private String login;
+
     public UserEntity() {
     }
 
-    public UserEntity(Long id, String username, String email, String password) {
+    public UserEntity(Long id, String username, String email, String password, String login) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.login = login;
     }
 
     public Long getId() {
@@ -61,6 +65,14 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     @Override

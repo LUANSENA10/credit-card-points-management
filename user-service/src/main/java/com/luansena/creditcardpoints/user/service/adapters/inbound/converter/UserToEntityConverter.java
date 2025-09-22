@@ -11,6 +11,7 @@ public class UserToEntityConverter {
         entity.setUsername(user.getName());
         entity.setEmail(user.getEmail());
         entity.setPassword(user.getPassword());
+        entity.setLogin(user.getLogin());
         return entity;
     }
 

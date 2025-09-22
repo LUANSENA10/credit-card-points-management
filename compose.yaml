@@ -91,6 +91,24 @@ services:
       timeout: 5s
       retries: 5
 
+  # Serviço da aplicação bff
+  bff:
+    build:
+      context: ./bff
+    container_name: bff_app
+    ports:
+      - "8085:8080" # Mapeia a porta 8085 do container para a 8084 da sua máquina
+    environment:
+      - POINT_SERVICE_URL=http://point-service:8081
+      - USER_SERVICE_URL=http://user-service:8080
+    depends_on:
+      point-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+    networks:
+      - app-network
+
 volumes:
   rabbitmq_data:
   postgres_data:

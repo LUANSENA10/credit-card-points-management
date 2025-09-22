@@ -11,7 +11,8 @@ public class UserToUserDTOConverter {
             user.getId(),
             user.getName(),
             user.getEmail(),
-            user.getPassword()
+            user.getPassword(),
+            user.getLogin()
         );
     }
 
@@ -21,4 +22,3 @@ public class UserToUserDTOConverter {
                 .collect(Collectors.toList());
     }
 }
-

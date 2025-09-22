@@ -1,4 +1,4 @@
-package com.luansena.creditcardpoints.user.service.adapters.inbound;
+package com.luansena.creditcardpoints.user.service.adapters.inbound.controller;
 
 import com.luansena.creditcardpoints.user.service.adapters.inbound.converter.UserRequestToUserConverter;
 import com.luansena.creditcardpoints.user.service.adapters.inbound.dto.UserRequest;
@@ -32,5 +32,12 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = UserToUserDTOConverter.convertAll(userRepositoryAdapter.findAll());
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/login/{login}")
+    public ResponseEntity<UserDTO> getByLogin(@PathVariable String login) {
+        return userRepositoryAdapter.findByLogin(login)
+            .map(user -> ResponseEntity.ok(UserToUserDTOConverter.convert(user)))
+            .orElse(ResponseEntity.notFound().build());
     }
 }

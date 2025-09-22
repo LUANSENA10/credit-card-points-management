@@ -11,6 +11,7 @@ public class UserRequestToUserConverter {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
+        user.setLogin(request.getLogin());
         return user;
     }
 

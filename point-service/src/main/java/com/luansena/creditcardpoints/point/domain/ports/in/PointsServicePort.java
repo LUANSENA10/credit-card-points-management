@@ -1,7 +1,6 @@
 package com.luansena.creditcardpoints.point.domain.ports.in;
 
 import com.luansena.creditcardpoints.point.domain.model.CardType;
-
 import java.math.BigDecimal;
 
 public interface PointsServicePort {
